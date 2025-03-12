@@ -1,0 +1,127 @@
+{
+  "name": "nette-for-vscode",
+  "displayName": "Nette for VS Code",
+  "description": "Advanced Nette and tooling support for Visual Studio Code",
+  "version": "1.0.0",
+  "publisher": "franken-ui",
+  "author": {
+    "name": "Franken UI",
+    "email": "reden@franken-ui.dev",
+    "url": "https://franken-ui.dev"
+  },
+  "homepage": "https://github.com/franken-ui/nette-for-vscode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/franken-ui/nette-for-vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/franken-ui/nette-for-vscode/issues"
+  },
+  "engines": {
+    "vscode": "^1.46.0"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/sveltecult"
+  },
+  "keywords": [
+    "nette",
+    "latte",
+    "template",
+    "snippet",
+    "formatter"
+  ],
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#3c8ed7",
+    "theme": "dark"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Formatters"
+  ],
+  "main": "./out/extension.js",
+  "scripts": {
+    "build-srv": "cd ./server && npm install && tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "vscode:prepublish": "webpack --mode production && npm run build-srv",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "neon",
+        "aliases": [
+          "Neon",
+          "neon"
+        ],
+        "extensions": [
+          ".neon"
+        ],
+        "configuration": "./neon.configuration.json"
+      },
+      {
+        "id": "latte",
+        "aliases": [
+          "Latte",
+          "latte"
+        ],
+        "extensions": [
+          ".latte"
+        ],
+        "configuration": "./latte.configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "neon",
+        "scopeName": "source.neon",
+        "path": "./syntaxes/neon.tmLanguage.json"
+      },
+      {
+        "language": "latte",
+        "scopeName": "text.html.php.latte",
+        "path": "./syntaxes/latte.tmLanguage.json",
+        "embeddedLanguages": {
+          "source.php": "php",
+          "source.css": "css",
+          "source.js": "javascript"
+        }
+      }
+    ],
+    "configuration": {
+      "title": "Latte Configuration",
+      "properties": {
+        "latte.format.enable": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable format latte file"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "language": "latte",
+        "path": "./snippets/latte.snippets.json"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onLanguage:latte"
+  ],
+  "devDependencies": {
+    "@types/node": "^16.18.16",
+    "@types/vscode": "^1.46.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.2",
+    "webpack": "^5.76.2",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "vscode-css-languageservice": "^6.2.4",
+    "vscode-html-languageservice": "^4.2.5",
+    "vscode-languageclient": "^6.1.4",
+    "vscode-languageserver-types": "^3.17.3"
+  }
+}

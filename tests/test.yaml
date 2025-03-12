@@ -1,0 +1,97 @@
+# Extended YAML configuration file for testing syntax highlighting
+
+application:
+  name: "DemoApp"                        # A string value in quotes
+  version: 1.0                           # A numeric value
+  errorPresenter:
+    "4xx": Error4xx                      # Keys that start with numbers must often be in quotes
+    "5xx": Error5xx
+  mapping: "App\\View\\Presenters\\*Presenter"
+  description: |
+    This is a multi-line description.
+    The literal block style (|) preserves line breaks.
+  
+database:
+  dsn: "mysql:host=localhost;dbname=demo"
+  user: demo_user
+  password: demo_pass
+  options:
+    persistent: true                     # Boolean value true
+    timeout: 30                          # Integer value
+
+extensions:
+  vite: "Contributte\\Vite\\Nette\\Extension"
+  logger: [ "Monolog\\Logger", "App\\Extensions\\CustomLogger" ]
+    
+vite:
+  manifestFile: "%wwwDir%/vite/manifest.json"
+  mode: production
+
+latte:
+  strictTypes: true
+  strictParsing: true
+  extensions:
+    - "App\\View\\Extensions\\LatteExtension"
+    - "App\\View\\Extensions\\AnotherLatteExtension"
+
+di:
+  export:
+    tags: false
+  services:
+    # List of services: using YAML's list syntax and a mapping for aliases
+    - "App\\Core\\ConfigFactory(parameters: @container::getParameters())"
+    - "App\\Core\\RouterFactory::createRouter"
+    - serviceAlias:
+        factory: "App\\Core\\ComplexService::create"
+        tags: [ "api", "secured" ]
+        lazy: true
+
+search:
+  paths:
+    - in: "%appDir%"
+      recursive: true
+      classes:
+        - "*Factory"                    # Wildcard pattern for factories
+        - "*Facade"                     # Wildcard pattern for facades
+  exclusions: [ "cache", "tmp" ]
+
+# Multi-line string using folded style (>) 
+notes: >
+  This configuration file is designed to test
+  a wide range of YAML syntax features including:
+    - Nested mappings
+    - Inline arrays
+    - Multi-line strings
+    - Anchors and merge keys
+    - Service definitions with parameters
+
+# Using anchors (&) and aliases (*) to reuse configuration parts
+defaultOptions: &defaultOptions
+  timeout: 60
+  retry: 3
+  verbose: false
+
+tasks:
+  backup:
+    schedule: "0 2 * * *"
+    options: *defaultOptions            # Alias to defaultOptions
+  cleanup:
+    schedule: "0 3 * * 0"
+    options: 
+      <<: *defaultOptions              # Merge default options
+      urgent: true
+
+# Environment-specific configuration overrides
+environments:
+  development:
+    debug: true
+    database:
+      dsn: "sqlite::memory:"
+      user: null
+      password: null
+  production:
+    debug: false
+    database:
+      dsn: "mysql:host=prod-db;dbname=demo_prod"
+      user: prod_user
+      password: prod_pass

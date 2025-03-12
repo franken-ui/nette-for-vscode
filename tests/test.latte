@@ -1,0 +1,191 @@
+{* Importing partial templates and components *}
+{import view_path('partials/header.latte')}
+{import view_path('partials/app_banner.latte')}
+
+{* Defining variables and fetching data *}
+{var $categories = App\Data\Category::all()}
+{var $user = $presenter->getUser()}
+{var $isLoggedIn = $user->isLoggedIn()}
+
+{* Block for main content *}
+<div class="container">
+    {if $isLoggedIn}
+        <p>Welcome back, {$user->getIdentity()->name|noescape}!</p>
+    {else}
+        <p>Welcome, guest!</p>
+    {/if}
+
+    {* Loop over categories *}
+    <ul class="categories">
+        {foreach $categories as $category}
+            <li data-id="{$category->id}">
+                <a href="{$category->getUrl()}">
+                    {$category->name}
+                </a>
+            </li>
+        {/foreach}
+    </ul>
+
+    {* Conditional check with elseif *}
+    {if $vite->isEnabled()}
+        <script type="module" src="{='@vite/client'|vite}"></script>
+    {elseif $vite->isDisabled()}
+        <script>
+            console.warn("Vite is disabled.");
+        </script>
+    {else}
+        <div class="alert alert-warning">Vite status unknown.</div>
+    {/if}
+
+    {* Including additional headers if set *}
+    {ifset $headers}
+        {include headers}
+    {/ifset}
+
+    {* Test dynamic attribute with inline ternary operator *}
+    <a
+        class="uk-btn at-btn-green uk-btn-sm w-full {if: $event['isSold']}opacity-50{/if}"
+        href="{$event['fullUrl']}"
+    >
+        {$event['name']}
+    </a>
+
+    <a
+        class="uk-btn at-btn-green uk-btn-sm w-full {$event['isSold'] ? 'opacity-50' : ''}"
+        href="{$event['fullUrl']}"
+    >
+        {$event['name']}
+    </a>
+
+    {* More conditionals using strict comparison *}
+    {if $event['masterId'] === 0}
+        <div class="text-primary">Main Event</div>
+    {else}
+        <div class="text-muted-foreground">Sub Event</div>
+    {/if}
+
+    {* A nested block example with HTML and Latte syntax *}
+    <section class="details">
+        {block content}
+            <h2>Event Details</h2>
+            <p>{!$event['description']|nl2br}</p>
+        {/block}
+    </section>
+
+    {* Inline comment *}
+    {* This line is a Latte comment and will not be rendered in the output *}
+</div>
+
+{* Custom CSS defined in a <style> block *}
+<style>
+    .main {
+        background: pink;
+    }
+    .alert {
+        border: 1px solid #f0ad4e;
+        color: #8a6d3b;
+    }
+    .categories {
+        list-style: none;
+        padding: 0;
+    }
+</style>
+
+{* Custom JavaScript defined in a <script> block *}
+<script>
+    const htmlElement = document.documentElement;
+
+    const __FRANKEN__ = JSON.parse(
+        localStorage.getItem("__FRANKEN__") || "{}"
+    );
+
+    if (
+        __FRANKEN__.mode === "dark" ||
+        (!__FRANKEN__.mode &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+        htmlElement.classList.add("dark");
+    } else {
+        htmlElement.classList.remove("dark");
+    }
+
+    htmlElement.classList.add(__FRANKEN__.theme || "uk-theme-rose");
+    htmlElement.classList.add(__FRANKEN__.radii || "uk-radii-md");
+    htmlElement.classList.add(__FRANKEN__.shadows || "uk-shadows-sm");
+    htmlElement.classList.add(__FRANKEN__.font || "uk-font-sm");
+
+    {ifset $analytics}
+        {var $analyticsData = $analytics->getData()}
+        console.log("Analytics data:", {$analyticsData|json});
+    {/ifset}
+</script>
+
+{* Import header *}
+{import view_path('partials/header.latte')}
+
+<div class="container">
+    {var $user = $presenter->getUser()}
+    
+    {* Conditional display using n:if on an HTML element *}
+    <div n:if="$user->isLoggedIn()">
+        Welcome back, <strong n:inner="$user->getIdentity()->name">User</strong>!
+    </div>
+    <div n:else>
+        Welcome, guest! Please <a n:href="login">login</a>.
+    </div>
+    
+    {* Using n:href for dynamic links *}
+    <a n:href="detail, id => $article->id" class="article-link">
+        {$article->title}
+    </a>
+    
+    {* Loop over items with n:foreach *}
+    <ul>
+        <li n:foreach="$items as $item" n:class="$item->isActive() ? 'active' : ''">
+            <span n:inner="$item->name">Item Name</span>
+        </li>
+    </ul>
+    
+    {* Using n:attr to dynamically set attributes *}
+    <a 
+        class="btn"
+        n:attr-href="$someLink" 
+        n:attr-title="Some dynamic title based on $someLink">
+        Click here
+    </a>
+    
+    {* Conditional class assignment with n:class *}
+    <div 
+        n:class="[
+            'alert-success' => $flash->type === 'success',
+            'alert-danger' => $flash->type === 'error'
+        ]">
+        {$flash->message}
+    </div>
+    
+    {* Using translation with n:translate (if translator is registered) *}
+    <p n:translate>Welcome to our website!</p>
+    
+    {* Example of data attribute injection using n:data *}
+    <div n:data-user-id="$user->id" n:data-role="$user->role">
+        User information container.
+    </div>
+    
+    {* Conditional link with n:if and n:href together *}
+    <a n:if="$post->isPublished()" n:href="postDetail, id => $post->id">
+        Read full post
+    </a>
+    
+    {* Testing inline boolean check with n:if and n:else on the same tag *}
+    <button 
+        class="btn"
+        n:if="$user->isAdmin()"
+        n:attr-title="'Admin area'"
+    >
+        Admin Panel
+    </button>
+    <button n:else class="btn-disabled">Not Allowed</button>
+</div>
+
+{* Import footer *}
+{import view_path('partials/footer.latte')}

@@ -1,0 +1,110 @@
+# Extended NEON configuration file for testing syntax highlighting
+
+# Application configuration with nested mappings and comments
+application:
+    name: "DemoApp"                # String value with quotes
+    version: 1.0                   # Numeric version without quotes
+    errorPresenter:
+        4xx: Error4xx              # Mapping for HTTP 4xx errors
+        5xx: Error5xx              # Mapping for HTTP 5xx errors
+    mapping: App\View\Presenters\*Presenter
+    description: >
+        This is a multi-line
+        description using the literal
+        block syntax to preserve formatting.
+
+# Database configuration with default values and environment variables
+database:
+    dsn: 'mysql:host=localhost;dbname=demo'
+    user: demo_user
+    password: demo_pass
+    options:
+        persistent: yes            # Boolean value (yes/no)
+        timeout: 30                # Integer value
+
+# Extensions configuration with inline arrays and nested mappings
+extensions:
+    # Simple extension registration
+    vite: Contributte\Vite\Nette\Extension
+    # Multiple extensions inline
+    logger: [ Monolog\Logger, App\Extensions\CustomLogger ]
+    
+vite:
+    manifestFile: %wwwDir%/vite/manifest.json
+    mode: production
+
+# Latte configuration with boolean values and extensions as a list
+latte:
+    strictTypes: yes
+    strictParsing: yes
+    extensions:
+        - App\View\Extensions\LatteExtension
+        - App\View\Extensions\AnotherLatteExtension
+
+# Dependency Injection configuration with export rules and services
+di:
+    export:
+        tags: no
+    services:
+        - App\Core\ConfigFactory(
+                parameters: @container::getParameters()
+          )
+        - App\Core\RouterFactory::createRouter
+        - serviceAlias: 
+            factory: App\Core\ComplexService::create
+            tags: [api, secured]
+            lazy: true                     # Boolean true
+
+# Search configuration with inline and block array definitions,
+# including list of classes with wildcards and reference aliases.
+search:
+    paths:
+        - in: %appDir%
+          recursive: yes                   # Boolean value to include subdirectories
+          classes:
+              - *Factory                   # Wildcard pattern for factories
+              - *Facade                    # Wildcard pattern for facades
+    exclusions: [ "cache", "tmp" ]         # Inline array for exclusions
+
+# Additional configuration for special cases
+
+# Multi-line string using folded block style
+notes: >
+    This configuration file is designed to test
+    a wide range of NEON syntax features including:
+      - Nested mappings
+      - Inline arrays
+      - Multi-line strings
+      - Parameter expansion
+      - Service definitions with parameters and method calls
+
+# Using references to reuse configuration parts
+defaultOptions: &defaultOptions
+    timeout: 60
+    retry: 3
+    verbose: no
+
+tasks:
+    backup:
+        schedule: "0 2 * * *"
+        options: *defaultOptions          # Reference to default options
+    cleanup:
+        schedule: "0 3 * * 0"
+        options:
+            <<: *defaultOptions           # Merge default options
+            urgent: yes
+
+# Environment-specific configuration overrides
+environments:
+    development:
+        debug: yes
+        database:
+            dsn: 'sqlite::memory:'
+            user: null
+            password: null
+    production:
+        debug: no
+        database:
+            dsn: 'mysql:host=prod-db;dbname=demo_prod'
+            user: prod_user
+            password: prod_pass

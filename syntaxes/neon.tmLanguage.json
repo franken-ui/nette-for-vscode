@@ -1,0 +1,109 @@
+{
+  "name": "Neon",
+  "scopeName": "source.neon",
+  "fileTypes": ["neon"],
+  "patterns": [
+    {
+      "begin": "(#)",
+      "end": "$",
+      "name": "comment.line.neon"
+    },
+    {
+      "include": "#variables"
+    },
+    {
+      "match": "\\b(days|day|hours|hour|minutes|minute|seconds|second|weeks|week|TRUE|True|true|FALSE|False|false|YES|Yes|yes|NO|No|no|ON|On|on|OFF|Off|off|NULL|Null|null)\\b",
+      "name": "constant.language.neon"
+    },
+    {
+      "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)\\b",
+      "name": "constant.numeric.neon"
+    },
+    {
+      "match": "^\\s*-\\s+",
+      "name": "keyword.operator.neon"
+    },
+    {
+      "captures": {
+        "1": {
+          "name": "entity.name.tag.neon"
+        },
+        "2": {
+          "name": "keyword.operator.neon"
+        }
+      },
+      "match": "^\\s*([a-zA-Z0-9._-]+)(:)(?=\\s*\\S+)",
+      "name": "meta.key-value.neon"
+    },
+    {
+      "captures": {
+        "1": {
+          "name": "entity.name.tag.neon"
+        },
+        "2": {
+          "name": "keyword.operator.neon"
+        }
+      },
+      "match": "^\\s*([a-zA-Z0-9._-]+)(:)",
+      "name": "meta.key-value.neon"
+    },
+    {
+      "match": "(@\\w+)",
+      "name": "support.class.neon"
+    },
+    {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double.neon",
+      "patterns": [
+        {
+          "match": "\\\\.",
+          "name": "constant.character.escape.neon"
+        },
+        {
+          "include": "#variables"
+        }
+      ]
+    },
+    {
+      "begin": "'",
+      "end": "'",
+      "name": "string.quoted.single.neon",
+      "patterns": [
+        {
+          "match": "\\\\.",
+          "name": "constant.character.escape.neon"
+        },
+        {
+          "include": "#variables"
+        }
+      ]
+    },
+    {
+      "match": "=|<|>|<=|>=|<=>|:|\\?",
+      "name": "keyword.operator.neon"
+    },
+    {
+      "match": "\\b(and|or|not)\\b",
+      "name": "keyword.operator.logical.neon"
+    },
+    {
+      "match": "\\*|\\||\\!|\\^|\\%|\\/|\\+|\\-",
+      "name": "keyword.operator.arithmetic.neon"
+    }
+  ],
+  "repository": {
+    "variables": {
+      "patterns": [
+        {
+          "match": "(%[^%]*%)",
+          "name": "variable.parameter.neon"
+        },
+        {
+          "match": "\\$(\\w+)",
+          "name": "variable.other.neon"
+        }
+      ]
+    }
+  }
+}

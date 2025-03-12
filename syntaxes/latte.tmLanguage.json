@@ -1,0 +1,191 @@
+{
+  "scopeName": "text.html.php.latte",
+  "name": "Latte",
+  "fileTypes": ["latte"],
+  "foldingStartMarker": "(/\\*|\\{\\s*$|<<<HTML)",
+  "foldingStopMarker": "(\\*/|^\\s*\\}|^HTML;)",
+  "injections": {
+    "L:text.html.php.latte meta.tag - (comment.block.latte | meta.embedded.block.latte)": {
+      "patterns": [
+        {
+          "include": "#latte-in-tag"
+        }
+      ]
+    },
+    "L:text.html.php.latte meta.tag string.quoted": {
+      "patterns": [
+        {
+          "include": "#latte-in-tag"
+        }
+      ]
+    },
+    "L:text.html.php.latte source.js": {
+      "patterns": [
+        {
+          "include": "#latte-tags"
+        },
+        {
+          "include": "#latte-comments"
+        }
+      ]
+    }
+  },
+  "patterns": [
+    {
+      "include": "#latte-comments"
+    },
+    {
+      "include": "#latte-tags"
+    },
+    {
+      "include": "#latte-n-attributes"
+    },
+    {
+      "include": "text.html.basic"
+    }
+  ],
+  "repository": {
+    "latte-comments": {
+      "name": "comment.block.latte",
+      "begin": "\\{\\*",
+      "end": "\\*\\}",
+      "patterns": [
+        {
+          "include": "#latte-comments"
+        }
+      ]
+    },
+    "latte-tags": {
+      "name": "meta.embedded.block.latte",
+      "begin": "\\{(?!\\*)",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.latte"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.latte"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#latte-expression"
+        }
+      ]
+    },
+    "latte-in-tag": {
+      "name": "meta.embedded.line.latte",
+      "begin": "\\{(?!\\*)",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.latte"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.latte"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#latte-expression"
+        }
+      ]
+    },
+    "latte-n-attributes": {
+      "begin": "\\b(n:[a-zA-Z0-9\\-:]+)\\b(=)(?:\")",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.other.attribute-name.latte"
+        },
+        "2": {
+          "name": "punctuation.separator.key-value.html"
+        }
+      },
+      "end": "\"",
+      "patterns": [
+        {
+          "include": "#latte-expression"
+        }
+      ]
+    },
+    "latte-expression": {
+      "patterns": [
+        {
+          "match": "\\/(if|else|elseif|foreach|for|while|block|define|snippet|ifset|cache|try|catch|finally|contentType|spaceless)\\b",
+          "name": "keyword.control.latte"
+        },
+        {
+          "match": "\\b(if|else|elseif|foreach|for|while|continue|break|do|switch|case|default|import|include|extends|block|define|var|capture|snippe?t|ifset|ifCurrent|elseifset|embed|ifset|contentType|status|use|form|label|input|render|first|last|with|spaceless|debugbreak|cache|try|catch|finally|trace|exit)(?=[\\s:{]|\\})",
+          "name": "keyword.control.latte"
+        },
+        {
+          "match": "\\|([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.latte"
+            }
+          }
+        },
+        {
+          "match": "\\$[a-zA-Z_][a-zA-Z0-9_]*(?:\\[[^\\]]+\\]|\\.[a-zA-Z_][a-zA-Z0-9_]*)*",
+          "name": "variable.other.latte"
+        },
+        {
+          "match": "\\?|:",
+          "name": "keyword.operator.ternary.latte"
+        },
+        {
+          "match": "'[^']*'|\"[^\"]*\"",
+          "name": "string.quoted.latte"
+        },
+        {
+          "match": "\\btrue\\b|\\bfalse\\b|\\bnull\\b",
+          "name": "constant.language.latte"
+        },
+        {
+          "match": "\\b[0-9]+(?:\\.[0-9]+)?\\b",
+          "name": "constant.numeric.latte"
+        },
+        {
+          "match": "\\b(and|or|not|as|instanceof)\\b",
+          "name": "keyword.operator.logical.latte"
+        },
+        {
+          "match": "==|===|!=|!==|<|>|<=|>=|<=>|\\+|-|\\*|\\/|%|\\.|=(?!=)|=>",
+          "name": "keyword.operator.latte"
+        },
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_\\\\]*)(?:::|->)([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": {
+              "name": "support.class.latte"
+            },
+            "2": {
+              "name": "entity.name.function.latte"
+            }
+          }
+        },
+        {
+          "match": "->([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "variable.other.member.latte"
+            }
+          }
+        },
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_\\\\]*)\\b",
+          "name": "support.class.latte"
+        },
+        {
+          "match": "(?<=[\\s{])([a-zA-Z_][a-zA-Z0-9_]*)(?=\\()",
+          "name": "entity.name.function.latte"
+        }
+      ]
+    }
+  }
+}
